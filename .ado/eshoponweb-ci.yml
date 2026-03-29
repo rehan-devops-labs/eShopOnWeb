@@ -20,6 +20,8 @@ stages:
   - job: Build
     pool:
       vmImage: ubuntu-latest
+      timeoutInMinutes: 60
+      demands: []
     steps:
     - task: DotNetCoreCLI@2
       displayName: Restore
