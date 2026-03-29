@@ -5,7 +5,13 @@
 resources:
   repositories:
     - repository: self
-      trigger: none
+      trigger: 
+        branches:
+          include:
+          - main
+        paths:
+          include:
+          - src/web/*
 
 stages:
 - stage: Build
@@ -14,6 +20,8 @@ stages:
   - job: Build
     pool:
       vmImage: ubuntu-latest
+      timeoutInMinutes: 60
+      demands: []
     steps:
     - task: DotNetCoreCLI@2
       displayName: Restore
