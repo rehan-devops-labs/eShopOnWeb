@@ -19,9 +19,7 @@ stages:
   jobs:
   - job: Build
     pool:
-      vmImage: 'Default'
-      timeoutInMinutes: 60
-      demands: []
+      name: 'Default'
     steps:
     - task: DotNetCoreCLI@2
       displayName: Restore
