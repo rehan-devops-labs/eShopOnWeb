@@ -60,3 +60,26 @@ stages:
         targetPath: '"$(Build.SourcesDirectory)/infra/webapp.bicep"'
         artifact: 'Bicep'
         publishLocation: 'pipeline'
+
+- stage: Deploy
+  displayName: Deploy to an Azure Web App
+  jobs:
+    - job: Deploy
+      pool:
+        vmImage: "windows-latest"
+      steps:
+      - task: DownloadBuildArtifacts@1
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'Website'
+          downloadPath: "$(Build.ArtifactStagingDirectory)"
+          
+      - task: AzureRmWebAppDeployment@5
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'DevOps(e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674)'
+          appType: 'webApp'
+          WebAppName: 'eshoponWebYAML166231235'
+          packageForLinux: "$(Build.ArtifactStagingDirectory)/**/Web.zip"
+          AppSettings: '-UseOnlyInMemoryDatabase true -ASPNETCORE_ENVIRONMENT Development'
