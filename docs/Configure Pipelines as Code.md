@@ -26,6 +26,29 @@ Configure CI/CD pipelines as code with YAML in Azure DevOps.
 - Azure subscription where you have Owner permissions.
 - Microsoft Entra tenant where you have Global Administrator permissions.
 - Browser supported by Azure DevOps.
+- Local Azure DevOps agent installed at `D:\Learning\AZ-400\Azure Agent`.
+- Agent pool registered in Azure DevOps (see agent setup below).
+
+## Agent Setup
+
+Before running the pipeline, you must start the local agent.
+
+1. Open PowerShell or Command Prompt.
+2. Navigate to the agent folder:
+
+```cmd
+cd D:\Learning\AZ-400\Azure Agent
+```
+
+3. Run the agent startup script:
+
+```cmd
+run.cmd
+```
+
+The agent will output a message confirming it is running and listening for jobs. Leave this window open during pipeline execution.
+
+Note: When you configured the agent during setup, it should have been registered and added to a pool (typically named `Default` or matching your pool name). Ensure the pool name used in the YAML matches your agent pool in Azure DevOps.
 
 ## Exercise 0: Configure Prerequisites
 
@@ -89,12 +112,12 @@ Edit `.ado/eshoponweb-ci.yml` and append a deploy stage:
 
 ```yaml
 - stage: Deploy
-	displayName: Deploy to an Azure Web App
-	jobs:
-		- job: Deploy
-			pool:
-				vmImage: "windows-latest"
-			steps:
+  displayName: Deploy to an Azure Web App
+  jobs:
+    - job: Deploy
+      pool:
+        name: Default  # Self-hosted agent pool
+      steps:
 ```
 
 Then add tasks under `steps` in this order.
@@ -103,24 +126,24 @@ Then add tasks under `steps` in this order.
 
 ```yaml
 - task: DownloadBuildArtifacts@1
-	inputs:
-		buildType: "current"
-		downloadType: "single"
-		artifactName: "Website"
-		downloadPath: "$(Build.ArtifactStagingDirectory)"
+  inputs:
+    buildType: "current"
+    downloadType: "single"
+    artifactName: "Website"
+    downloadPath: "$(Build.ArtifactStagingDirectory)"
 ```
 
 2. Deploy to Azure App Service (use your subscription and app name):
 
 ```yaml
 - task: AzureRmWebAppDeployment@4
-	inputs:
-		ConnectionType: "AzureRM"
-		azureSubscription: "<your-service-connection>"
-		appType: "webApp"
-		WebAppName: "<your-webapp-name>"
-		packageForLinux: "$(Build.ArtifactStagingDirectory)/**/Web.zip"
-		AppSettings: "-UseOnlyInMemoryDatabase true -ASPNETCORE_ENVIRONMENT Development"
+  inputs:
+    ConnectionType: "AzureRM"
+    azureSubscription: "<your-service-connection>"
+    appType: "webApp"
+    WebAppName: "<your-webapp-name>"
+    packageForLinux: "$(Build.ArtifactStagingDirectory)/**/Web.zip"
+    AppSettings: "-UseOnlyInMemoryDatabase true -ASPNETCORE_ENVIRONMENT Development"
 ```
 
 Important checks:
@@ -151,24 +174,24 @@ Before:
 
 ```yaml
 jobs:
-	- job: Deploy
-		pool:
-			vmImage: "windows-latest"
-		steps:
+  - job: Deploy
+    pool:
+      name: Default  # Self-hosted agent pool
+    steps:
 ```
 
 After:
 
 ```yaml
 jobs:
-	- deployment: Deploy
-		environment: approvals
-		pool:
-			vmImage: "windows-latest"
-		strategy:
-			runOnce:
-				deploy:
-					steps:
+  - deployment: Deploy
+    environment: approvals
+    pool:
+      name: Default  # Self-hosted agent pool
+    strategy:
+      runOnce:
+        deploy:
+          steps:
 ```
 
 Then place existing deploy steps under `strategy.runOnce.deploy.steps`.
@@ -189,10 +212,27 @@ Run the pipeline again and validate behavior:
 
 ## Cleanup
 
-Delete the lab Azure resources when finished to avoid ongoing costs.
+### Stop the local agent
+
+1. Switch to the PowerShell or Command Prompt window where the agent is running.
+2. Press `Ctrl+C` to stop the agent.
+3. Wait for the agent to gracefully shut down.
+
+### Delete Azure resources
+
+Delete the lab Azure resources to avoid ongoing costs.
 
 Suggested cleanup commands:
 
 ```bash
 az group delete --name az400m03l07-RG --yes --no-wait
 ```
+
+### Optional: Unregister the agent from Azure DevOps
+
+If you will not reuse this agent for future labs, unregister it from your Azure DevOps organization:
+
+1. Navigate to **Organization Settings** > **Agent pools**.
+2. Select the agent pool containing your local agent.
+3. Locate your agent in the list and click the delete/remove icon.
+4. Confirm removal.
