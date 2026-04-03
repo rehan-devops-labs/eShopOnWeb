@@ -19,7 +19,7 @@ stages:
   jobs:
   - job: Build
     pool:
-      vmImage: ubuntu-latest
+      vmImage: 'Default'
       timeoutInMinutes: 60
       demands: []
     steps:
