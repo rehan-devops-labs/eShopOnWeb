@@ -13,12 +13,12 @@ resources:
 variables:
   location: 'centralus'
   templateFile: 'infra/aci.bicep'
-  subscriptionid: 'YOUR-SUBSCRIPTION-ID'
-  azureserviceconnection: 'azure subs'
-  webappname: 'az400eshop-NAME'
-  acr-login-server: 'YOUR-ACR.azurecr.io'
-  acr-username: 'ACR-USERNAME'
-  resource-group: 'AZ400-EWebShop-NAME' 
+  subscriptionid: 'e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674'
+  azureserviceconnection: 'DevOps(e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674)'
+  webappname: 'az400eshop-rg-aci-webapp'
+  acr-login-server: 'crktkitftp3wgks.azurecr.io'
+  acr-username: 'crktkitftp3wgks'
+  resource-group: 'rg-eshop'
 
 
 stages:
@@ -30,7 +30,7 @@ stages:
   jobs:
   - job: Deploy
     pool:
-      vmImage: ubuntu-latest
+      name: 'Default'
     steps:
     # Deploy Azure Container Instance using Bicep
     - task: AzureResourceManagerTemplateDeployment@3
