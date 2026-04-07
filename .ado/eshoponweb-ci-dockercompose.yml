@@ -14,11 +14,11 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
-  resource-group: 'AZ400-EWebShop-NAME'
+  resource-group: 'rg-eshop'
   location: 'centralus'
   templateFile: 'infra/acr.bicep'
   azureserviceconnection: 'azure subs'
-  subscriptionId: 'YOUR-SUBSCRIPTION-ID'
+  subscriptionId: 'e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674'
 
 stages:
 - stage: Build
