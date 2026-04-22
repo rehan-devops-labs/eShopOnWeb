@@ -18,7 +18,7 @@ steps:
   - task: AzureCLI@2
     inputs:
       azureSubscription: $(azureServiceConnection)
-      scriptType: bash
+      scriptType: ps
       scriptLocation: inlineScript
       inlineScript: |
         az --version
