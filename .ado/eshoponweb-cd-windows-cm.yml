@@ -1,6 +1,6 @@
 variables:
   resource-group: 'AZ400-EWebShop-Rehan'
-  location: 'eastus'
+  location: 'centralus'
   templateFile: 'infra/simple-windows-vm.bicep'
   azureserviceconnection: 'DevOps(e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674)'
 
