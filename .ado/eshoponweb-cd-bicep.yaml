@@ -9,7 +9,7 @@ variables:
   azureServiceConnection: "DevOps(e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674)"
   resourceGroupName: "Bicep"
   location: "eastus"
-  templateFile: "test.bicep"
+  templateFile: "infra/test.bicep"
 
 pool:
   name: "Default"
