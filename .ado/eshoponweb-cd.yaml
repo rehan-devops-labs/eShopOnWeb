@@ -1,0 +1,26 @@
+trigger:
+ - main
+
+name: Deploy Bicep Files
+
+variables:
+  vmImageName: "ubuntu-latest"
+
+  azureServiceConnection: "DevOps(e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674)"
+  resourceGroupName: "Bicep"
+  location: "eastus"
+  templateFile: "test.bicep"
+
+pool:
+  name: "Default"
+
+steps:
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az --version
+        az group create --name $(resourceGroupName) --location $(location)
+        az deployment group create --resource-group $(resourceGroupName) --template-file $(templateFile)
