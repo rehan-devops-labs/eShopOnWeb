@@ -1,4 +1,5 @@
-on: [push]
+# Triggers (uncomment line below to use it)
+# on: [push]
 name: Azure Resource Manager
 jobs:
   build-and-deploy:
