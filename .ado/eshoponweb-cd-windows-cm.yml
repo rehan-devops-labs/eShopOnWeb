@@ -1,5 +1,5 @@
 variables:
-  resource-group: 'AZ400-EWebShop-NAME'
+  resource-group: 'AZ400-EWebShop-Rehan'
   location: 'centralus'
   templateFile: 'infra/simple-windows-vm.bicep'
   azureserviceconnection: 'azure subs'
