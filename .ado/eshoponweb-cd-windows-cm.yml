@@ -16,7 +16,7 @@ stages:
     - task: AzureCLI@2
       inputs:
         azureSubscription: $(azureserviceconnection)
-        scriptType: 'bash'
+        scriptType: ps
         scriptLocation: 'inlineScript'
         inlineScript: |
           az group create -l $(location) -n $(resource-group)
