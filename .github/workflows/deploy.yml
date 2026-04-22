@@ -19,5 +19,5 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           resourceGroupName: ${{ secrets.AZURE_RG }}
           template: ./infra/test.bicep
-          parameters: storageName=stg location=eastus
+          parameters: location=eastus
           failOnStdErr: false
