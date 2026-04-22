@@ -2,7 +2,7 @@ variables:
   resource-group: 'AZ400-EWebShop-Rehan'
   location: 'centralus'
   templateFile: 'infra/simple-windows-vm.bicep'
-  azureserviceconnection: 'azure subs'
+  azureserviceconnection: 'DevOps(e4cc4d5c-bd21-4ee9-b0a8-a990e1f71674)'
 
 stages:
 - stage: Deploy
@@ -10,7 +10,7 @@ stages:
   jobs:
   - job: Deploy
     pool:
-      vmImage: ubuntu-latest
+      name: "Default"
     steps:
     - checkout: self
     - task: AzureCLI@2
