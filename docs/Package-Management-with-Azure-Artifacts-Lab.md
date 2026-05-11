@@ -133,25 +133,34 @@ The repository is organized as follows:
    cd .\bin\Release
    ```
 
-8. Publish the package to the eShopOnWebShared feed (replace the URL with your actual source URL):
+8. **Installing the Credential Provider:**
+   - If you receive a 401 Unauthorized error, you need to install the Azure Artifacts credential provider
+   - Download the installation script from: `https://aka.ms/install-artifacts-credprovider.ps1`
+   - Run it in **PowerShell as Administrator**:
+     ```powershell
+     iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
+     ```
+   - This script installs the credential provider and configures authentication with Azure DevOps
+
+9. After the credential provider is installed, publish the package to the eShopOnWebShared feed (replace the URL with your actual source URL):
    ```powershell
-   dotnet nuget push --source "https://pkgs.dev.azure.com/Azure-DevOps-Org-Name/_packaging/eShopOnWebShared/nuget/v3/index.json" --api-key az "eShopOnWeb-XXXXXX.Shared.1.0.0.nupkg"
+   dotnet nuget push --interactive --source "https://pkgs.dev.azure.com/your-org/_packaging/eShopOnWebShared/nuget/v3/index.json" --api-key az "eShopOnWeb-XXXXXX.Shared.1.0.0.nupkg"
    ```
 
-**Notes:**
-- If you receive a 401 Unauthorized error, install the credential provider:
-  ```powershell
-  iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) } -AddNetfx"
-  ```
+**Important Notes:**
+- Use `--interactive` flag to allow interactive authentication
 - You can use any non-empty API key (example uses "az")
-- Sign in to your Azure DevOps organization when prompted
-- If needed, add the `–interactive` parameter to the command
+- When prompted, sign in with your Azure DevOps credentials
+- If using WSL/PowerShell (non-admin), you may need to use a Personal Access Token (PAT) instead of interactive authentication:
+  ```powershell
+  dotnet nuget push --source "https://pkgs.dev.azure.com/your-org/_packaging/eShopOnWebShared/nuget/v3/index.json" --api-key [your-PAT] "eShopOnWeb-XXXXXX.Shared.1.0.0.nupkg"
+  ```
 
-9. After successful push, verify in Azure DevOps:
-   - Go to **Artifacts**
-   - Select **eShopOnWebShared** feed from the dropdown
-   - The newly published package should appear
-   - Click the package to view its details
+10. After successful push, verify in Azure DevOps:
+    - Go to **Artifacts**
+    - Select **eShopOnWebShared** feed from the dropdown
+    - The newly published package should appear
+    - Click the package to view its details
 
 #### Task 3: Import an Open-Source NuGet Package to the Feed
 
@@ -162,30 +171,60 @@ This demonstrates using NuGet packages from the public NuGet gallery (nuget.org)
    cd ../..
    ```
 
-2. Install the Newtonsoft.Json package:
+2. **Using Visual Studio to download packages:**
+   - You can use Visual Studio's NuGet Package Manager to search and download packages
+   - Right-click your project > **Manage NuGet Packages**
+   - Search for packages like "Newtonsoft.Json"
+   - Click **Install** to add the package to your project
+
+3. Alternatively, install via PowerShell command:
    ```powershell
    dotnet add package Newtonsoft.Json
    ```
 
-3. The output shows the feeds being queried:
+4. The output shows the feeds being queried:
    ```
    Feeds used:
      https://api.nuget.org/v3/registration5-gz-semver2/newtonsoft.json/index.json
      https://pkgs.dev.azure.com/<AZURE_DEVOPS_ORGANIZATION>/eShopOnWeb/_packaging/eShopOnWebShared/nuget/v3/index.json
    ```
 
-4. In Visual Studio Solution Explorer, navigate to eShopOnWeb.Shared Project > Dependencies > Packages and locate Newtonsoft.Json
+5. In Visual Studio Solution Explorer, navigate to eShopOnWeb.Shared Project > Dependencies > Packages and locate Newtonsoft.Json
 
-5. The Azure Artifacts feed enables upstream sources (like nuget.org), allowing automatic caching of public packages while maintaining a single source of truth
+6. The Azure Artifacts feed enables upstream sources (like nuget.org), allowing automatic caching of public packages while maintaining a single source of truth
 
-6. Verify in Azure DevOps Artifacts:
+7. Verify in Azure DevOps Artifacts:
    - Refresh the **Artifacts** page
    - The feed now shows both the custom eShopOnWeb.Shared and the Newtonsoft.Json packages
 
-7. In Visual Studio, you can also view packages in **NuGet Package Manager**:
+8. In Visual Studio, you can also view packages in **NuGet Package Manager**:
    - Right-click the eShopOnWeb.Shared project > **Manage NuGet Packages**
    - Verify the Package Source is set to **eShopOnWebShared**
    - Click **Browse** to see both packages
+
+#### Task 4: Publishing Packages from WSL/PowerShell
+
+If you're working in a WSL environment or non-administrator PowerShell session:
+
+1. Navigate to your package directory:
+   ```bash
+   cd /path/to/eShopOnWeb.Shared/bin/Release
+   ```
+
+2. For WSL/non-admin environments, use a **Personal Access Token (PAT)** instead of interactive authentication:
+   - Go to your Azure DevOps organization > **User settings** (top right)
+   - Click **Personal access tokens**
+   - Click **New Token**
+   - Name: `NuGet Publishing`
+   - Scope: Select **Packaging (read & write)**
+   - Click **Create** and copy the token
+
+3. Push the package using your PAT:
+   ```bash
+   dotnet nuget push --source "https://pkgs.dev.azure.com/your-org/_packaging/eShopOnWebShared/nuget/v3/index.json" --api-key [your-PAT] "eShopOnWeb-XXXXXX.Shared.1.0.0.nupkg"
+   ```
+
+4. Verify the package was published successfully in Azure DevOps Artifacts
 
 ---
 
